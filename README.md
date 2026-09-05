@@ -6,6 +6,8 @@
 
 ![Tool hero — inputs page with site auto-fill](docs/screenshots/01-hero-autofill.png)
 
+> All 27 screenshots in this README are **light-mode captures from a live analysis of https://www.igamingontario.ca/en** — 18 targets auto-discovered, geo correctly inferred as CA-ON, 5 dead links caught, 28 chains audited.
+
 In iGaming, an affiliate link is never a straight line. One click on an offer button routes through publisher cloaking plugins (`/out/bet365`), analytics handlers, affiliate ad servers (Income Access, Cellxpert, Everflow, NetRefer), geo/compliance routers and operator attribution — and when any hop silently breaks, strips an ID, slows down or lands on the wrong jurisdiction, the publisher's site stays up while the revenue pipeline quietly dies.
 
 This tool continuously **crawls, executes, simulates and audits multi-hop affiliate redirect chains at scale under hyper-realistic browsing conditions** — catching broken links, dropped tracking parameters, latency bottlenecks and regulatory violations before they burn commission revenue. Every number it shows comes from **live HTTP measurements taken during your run**, with evidence counters to prove it. Anything it cannot verify remotely (private GA4 clicks, EPC deals) is **explicitly labelled ESTIMATED, never faked**.
