@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Outbound Affiliate Link Chain &amp; Latency Tracker — Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="styles.css?v=3"/>
+</head>
+<body>
+<header class="top">
+<div class="brand"><h1>Outbound Affiliate Link Chain <span>&amp; Latency Tracker</span></h1>
+<div class="tagline">Enterprise revenue-guarding engine for iGaming affiliate redirect chains — live multi-hop tracing, param-loss fingerprinting, latency profiling, compliance guardianship and edge auto-healing.</div>
+<div class="crumb">Page 2 · Full analysis — all 10 core features &amp; subfunctions</div></div>
+<div class="headright"><button class="btn ghost" id="themebtn" onclick="toggleTheme()">☀️ Light mode</button>
+<div class="steps"><div class="step">1 Inputs</div><div class="step on">2 Analysis</div><div class="step">3 Outputs</div></div>
+<nav class="docnav"><a href="index.html">Tool</a> · <a href="info.html?p=about">About</a> · <a href="info.html?p=why2026">Why 2026</a> · <a href="info.html?p=features">Features</a> · <a href="info.html?p=inputs">Inputs</a> · <a href="info.html?p=outputs">Outputs</a> · <a href="info.html?p=impact">Impact</a></nav></div>
+</header>
+<main id="root"><p style="color:var(--mut)">Loading analysis…</p></main>
+<main><div class="card" style="text-align:center">
+<button class="btn" onclick="location.href='outputs.html'">VIEW ALL OUTPUTS → Page 3</button>
+<span style="margin-left:12px"></span><button class="btn ghost" onclick="location.href='index.html'">← Back to inputs</button>
+</div></main>
+<script src="common.js?v=3"></script>
+<script>
+const R = store.get("pf_result", null), IN = store.get("pf_input", {});
+if (!R) { document.querySelector("#root").innerHTML = `<div class="card"><h2>No analysis found</h2><p class="d">Run the audit from Page 1 first.</p><button class="btn" onclick="location.href='index.html'">← Go to Page 1</button></div>`; }
+else {
+try {
+const C = R.chains || [], root = document.querySelector("#root");
+const failed = C.filter(c => !c.chain_ok || !c.params_intact);
+let h = `<div class="kpis">
+<div class="kpi"><div class="l">Chains traced</div><div class="v">${C.length}</div></div>
+<div class="kpi"><div class="l">Broken / param-loss</div><div class="v" style="color:var(--red)">${failed.length}</div></div>
+<div class="kpi"><div class="l">Revenue at risk</div><div class="v">$${(R.revenue_at_risk||0).toLocaleString()}</div></div>
+<div class="kpi"><div class="l">Health index</div><div class="v">${R.health_index}/100</div></div>
+<div class="kpi"><div class="l">Mode</div><div class="v" style="font-size:18px">${R.effective_settings?.execution_mode||"hybrid"}</div></div></div>`;
+
+// F1 — multi-hop tracing
+h += `<div class="card"><h2><span class="n">F1</span>Multi-Hop Asynchronous Tracing Engine (HTTP + Headless)</h2>
+<p class="d">Hybrid crawler: fast HTTP header tracer, escalated to headless on JS redirects / bot walls. Every hop records status, IP, server and DNS time.</p>` +
+C.map((c,i)=>`<h3 style="font-size:14px">#${i+1} ${c.source_url} → ${statusBadge(c.final_status)} ${c.headless_used?badge("headless","info"):""} ${c.js_redirect_detected?badge("JS-redirect","warn"):""} ${c.needs_headless?badge("bot-wall","warn"):""} ${revBasisBadge(c)}</h3>${hopMapHTML(c)}${forensicsHTML(c)}${parityHTML(c)}${evidenceHTML(c)}`).join("") + `</div>`;
+
+// F2 — param fingerprinting
+h += `<div class="card"><h2><span class="n">F2</span>Dynamic Tracking Parameter Loss Fingerprinting</h2>
+<p class="d">Hop-by-hop query-param mutation audit: survived / stripped / mutated, plus operator→network routing check.</p><table><thead><tr><th>Chain</th><th>Param events</th><th>Network path</th><th>Verdict</th></tr></thead><tbody>` +
+C.map(c=>`<tr><td>${c.source_url}</td><td>${(c.param_events||[]).map(e=>`${e.param}: <b>${e.status}</b>${e.stripped_at_hop!=null?` (lost at hop ${e.stripped_at_hop})`:""}${e.mutated_to?` → ${e.mutated_to}`:""}`).join("<br/>")||"<i>no tracked IDs at hop 0 — link carries no affiliate params</i>"}</td><td>${c.expected_operator} → ${c.expected_network}: ${c.network_path_ok?badge("OK","ok"):badge("MISMATCH","fail")}</td><td>${c.params_intact?badge("INTACT","ok"):badge("LOSS","fail")}</td></tr>`).join("") + `</tbody></table></div>`;
+
+// F3 — latency
+h += `<div class="card"><h2><span class="n">F3</span>Geo-Fenced Edge &amp; Latency Profiler</h2>
+<p class="d">Per-hop DNS / TCP+TLS / TTFB / download split. Drop-off scored against the 1800ms 4G threshold. Test origin pinned to licence geo node.</p><table><thead><tr><th>Chain (geo · device)</th><th>DNS Σ</th><th>TTFB Σ</th><th>Total</th><th>Drop-off risk</th><th>Verdict</th></tr></thead><tbody>` +
+C.map(c=>`<tr><td>${c.source_url}<br/><span style="color:var(--mut)">${c.geo} · ${c.device} · per-hop: ${(c.latency?.per_hop_ms||[]).join(" / ")} ms</span></td><td>${c.latency?.dns_total_ms}ms</td><td>${c.latency?.ttfb_total_ms}ms</td><td><b>${Math.round(c.latency?.total_ms||0)}ms</b></td><td>${c.latency?.dropoff_risk_pct}%</td><td>${verdictBadge(c.latency?.verdict)}</td></tr>`).join("") + `</tbody></table>
+<p class="d">Proxy routing notes:<br/><pre>${(IN.proxies||"").replace(/</g,"&lt;")}</pre></p></div>`;
+
+// F4 — compliance
+h += `<div class="card"><h2><span class="n">F4</span>Automated Compliance &amp; License Guardian</h2>
+<p class="d">Geo-redirect audit, RG disclosure scrape, soft-404 / expired-offer NLP.</p><table><thead><tr><th>Final lander</th><th>Required strings</th><th>Badges</th><th>Soft-404</th><th>Geo-mismatch</th><th>Verdict</th></tr></thead><tbody>` +
+C.map(c=>{const k=c.compliance||{};return `<tr><td style="word-break:break-all">${c.final_url}</td>
+<td>${Object.entries(k.required_strings||{}).map(([s,f])=>`${f?"✅":"❌"} ${s}`).join("<br/>")}</td>
+<td>${Object.entries(k.license_badges||{}).map(([s,f])=>`${f?"✅":"❌"} ${s}`).join("<br/>")}</td>
+<td>${k.soft404_detected?badge("EXPIRED "+(k.soft404_phrases_hit||[]).join(","),"fail"):badge("clean","ok")}</td>
+<td>${k.geo_mismatch?badge(k.geo_mismatch_detail||"MISMATCH","fail"):badge("routed OK","ok")}</td>
+<td>${k.compliant?badge("COMPLIANT","ok"):badge("VIOLATION","fail")}</td></tr>`;}).join("") + `</tbody></table></div>`;
+
+// F5 — bot mitigation
+h += `<div class="card"><h2><span class="n">F5</span>Bot Mitigation &amp; Anti-Evasion Bypassing</h2>
+<p class="d">Fingerprint-spoofed headers per device profile; residential proxy rotation; headless escalation only where a bot wall / JS challenge was met.</p><table><thead><tr><th>Chain</th><th>JS redirect hit</th><th>Bot-wall signal</th><th>Headless used</th><th>Status</th></tr></thead><tbody>` +
+C.map(c=>`<tr><td>${c.source_url}</td><td>${c.js_redirect_detected?"yes":"no"}</td><td>${c.needs_headless?"yes":"no"}</td><td>${c.headless_used?"yes":"no"}</td><td>${c.hops?.some(x=>x.error)?badge("blocked/error","warn"):badge("passed","ok")}</td></tr>`).join("") + `</tbody></table></div>`;
+
+// F6 — edge auto-heal
+h += `<div class="card"><h2><span class="n">F6</span>Dynamic Auto-Healing / Edge Link Rerouting</h2>
+<p class="d">Every broken / param-stripped / 4xx chain gets copy-paste Cloudflare Worker, Vercel Edge and WordPress patches. Zero lost traffic while CMS is fixed.</p>` +
+C.filter(c=>c.edge_patch?.needed).map((c,i)=>`<h3 style="font-size:14px">${c.source_url} — ${c.broken_reason||"param-loss"}</h3><pre id="cf${i}">${(c.edge_patch.cloudflare_worker_js||"").replace(/</g,"&lt;")}</pre><div class="rowbtns"><button class="btn ghost" onclick="copyText('cf${i}')">Copy Cloudflare Worker</button></div><pre>${(c.edge_patch.vercel_edge_js||"").replace(/</g,"&lt;")}\n\n${(c.edge_patch.wordpress_redirect||"").replace(/</g,"&lt;")}</pre>`).join("") + `</div>`;
+
+// F7 — adblock
+const abFeeds = Object.entries(IN.adblock||{}).filter(([k,v])=>v).map(([k])=>k).join(", ");
+h += `<div class="card"><h2><span class="n">F7</span>Ad-Blocker &amp; Browser Privacy Bypass Auditor</h2>
+<p class="d">Simulated against: ${abFeeds||"default lists"}. Tracking-subdomain hops that EasyList/Brave/ITP would kill are flagged.</p><table><thead><tr><th>Chain</th><th>Blocked hosts</th><th>Vulnerable</th></tr></thead><tbody>` +
+C.map(c=>`<tr><td>${c.source_url}</td><td>${(c.adblock_blocked_hosts||[]).join("<br/>")||"—"}</td><td>${c.adblock_vulnerable?badge("VULNERABLE","warn"):badge("resilient","ok")}</td></tr>`).join("") + `</tbody></table></div>`;
+
+// F8 — deeplink
+h += `<div class="card"><h2><span class="n">F8</span>Dynamic Deep-Linking &amp; App Store Route Inspection</h2><table><thead><tr><th>Chain (device)</th><th>App scheme</th><th>Store fallback</th><th>Universal link</th><th>Verdict</th></tr></thead><tbody>` +
+C.map(c=>`<tr><td>${c.source_url} (${c.device})</td><td>${c.deeplink?.has_app_scheme?"yes":"no"}</td><td>${c.deeplink?.has_store_fallback?"yes":"no"}</td><td>${c.deeplink?.has_universal_link?"yes":"no"}</td><td>${badge(c.deeplink?.verdict||"?", (c.deeplink?.verdict||"").includes("ok")?"ok":"warn")}</td></tr>`).join("") + `</tbody></table></div>`;
+
+// F9 — brand alignment
+h += `<div class="card"><h2><span class="n">F9</span>AI-Powered Landing Page Sentiment &amp; Brand Alignment</h2><table><thead><tr><th>Review page brand</th><th>Found on lander</th><th>Rival brands detected</th><th>Aligned</th></tr></thead><tbody>` +
+C.map(c=>`<tr><td>${c.brand_alignment?.expected_brand||"—"}</td><td>${c.brand_alignment?.brand_found_on_lander?"yes":"no"}</td><td>${(c.brand_alignment?.rival_brands_detected||[]).join(", ")||"—"}</td><td>${c.brand_alignment?.aligned?badge("ALIGNED","ok"):badge("MISALIGNED","fail")}</td></tr>`).join("") + `</tbody></table></div>`;
+
+// F10 — offer discrepancy
+h += `<div class="card"><h2><span class="n">F10</span>Competitive Offer Discrepancy Engine</h2>
+<p class="d">On-site bonus pitch vs live lander text. Promo feeds monitored:<br/><pre>${((IN.promofeeds||"").replace(/</g,"&lt;"))||"none configured"}</pre></p><table><thead><tr><th>Chain</th><th>Site offer</th><th>Lander offer</th><th>Comparable</th><th>Verdict</th></tr></thead><tbody>` +
+C.map(c=>`<tr><td>${c.source_url}<br/><span style="color:var(--mut)">${c.bonus_text_on_site||""}</span></td><td>${c.offer_discrepancy?.site_offer||"—"}</td><td>${c.offer_discrepancy?.lander_offer||"—"}</td><td>${c.offer_discrepancy?.comparable?"yes":"no"}</td><td>${c.offer_discrepancy?.mismatch?badge("MISMATCH","fail"):badge(c.offer_discrepancy?.comparable?"MATCH":"n/a","ok")}</td></tr>`).join("") + `</tbody></table></div>`;
+
+// extras: edge logs + baselines + affiliate creds
+const logLines=(IN.edgelogs||"").split("\n").filter(l=>/\/(out|go|visit)\//.test(l)).length;
+h += `<div class="card"><h2>Input-layer telemetry</h2><p class="d">Edge-log click events parsed: <b>${logLines}</b> · Affiliate platform: <b>${IN.aff_platform||"—"}</b> (${IN.aff_user||"no user"}${IN.aff_key_set?", key set (session-only)":", no key"}) · Baselines:<br/><pre>${((IN.baselines||"").replace(/</g,"&lt;"))}</pre></p></div>`;
+root.innerHTML = h;
+} catch (renderErr) {
+  document.querySelector("#root").innerHTML = `<div class="card"><h2>Render error</h2><pre>${String(renderErr && renderErr.stack || renderErr).replace(/</g, "&lt;")}</pre><div class="rowbtns"><button class="btn" onclick="location.href='index.html'">← Back to Page 1</button></div></div>`;
+}
+}
+</script>
+</body>
+</html>

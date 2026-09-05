@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Outbound Affiliate Link Chain &amp; Latency Tracker — Inputs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="styles.css?v=3"/>
+</head>
+<body>
+<header class="top">
+<div class="brand"><h1>Outbound Affiliate Link Chain <span>&amp; Latency Tracker</span></h1>
+<div class="tagline">Enterprise revenue-guarding engine for iGaming affiliate redirect chains — live multi-hop tracing, param-loss fingerprinting, latency profiling, compliance guardianship and edge auto-healing.</div>
+<div class="crumb">Page 1 · Enterprise Audit Inputs — all 10 input layers</div></div>
+<div class="headright"><button class="btn ghost" id="themebtn" onclick="toggleTheme()">☀️ Light mode</button>
+<div class="steps"><div class="step on">1 Inputs</div><div class="step">2 Analysis</div><div class="step">3 Outputs</div></div>
+<nav class="docnav"><a href="info.html?p=about">About</a> · <a href="info.html?p=why2026">Why 2026</a> · <a href="info.html?p=features">Features</a> · <a href="info.html?p=inputs">Inputs</a> · <a href="info.html?p=outputs">Outputs</a> · <a href="info.html?p=impact">Impact</a></nav></div>
+</header>
+<main>
+
+<div class="card" style="border-color:var(--accent)"><h2><span class="n">0</span>Auto-Fill From Any Website URL</h2>
+<p class="d">Paste any business / publisher URL — the tool crawls it (sitemaps, pages, outbound affiliate links) and fills layers 1–10 automatically: targets, sitemaps, geo guess, networks, bonuses, EPC estimates, promo feeds. Review and tweak before running.</p>
+<div class="grid2">
+<div><label class="f">Website URL</label><input type="text" id="af_site" placeholder="https://your-publisher-site.com"/></div>
+<div><label class="f">Max pages to crawl</label><input type="number" id="af_pages" value="25"/></div>
+</div>
+<div class="rowbtns"><button class="btn" id="afbtn" onclick="autofill()">🔍 AUTO-FILL ALL FIELDS FROM SITE</button></div>
+<div class="rowbtns" id="afcsvrow" style="display:none"><button class="btn ghost" onclick="download('autofill-targets.csv',toCSV(window._afTargets||[]),'text/csv')">⬇ Download discovered targets as CSV (browsers block auto-attaching files — download then re-upload in Layer 1)</button></div>
+<div id="afmsg" style="font-size:13px;color:var(--mut)"></div>
+</div>
+
+<div class="card"><h2><span class="n">1</span>Site Crawl &amp; Target Discovery</h2>
+<p class="d">Sitemaps / pasted lists / CSV upload are merged into one target queue. Crawl constraints control speed, depth and exclusions.</p>
+<label class="f">XML Sitemaps / Sitemap Index URLs (one per line)</label>
+<textarea id="sitemaps" placeholder="https://example.com/post-sitemap.xml"></textarea>
+<div class="grid2"><div><label class="f">Sitemap URL cap</label><input type="number" id="sitemap_limit" value="50"/></div></div>
+<label class="f">Direct URL list (one per line — top-converting landing pages)</label>
+<textarea id="pasted" placeholder="https://publisher.com/out/bet365?btag=1234"></textarea>
+<label class="f">Bulk CSV upload (columns: source_url,anchor_text,expected_operator,expected_network,geo,device,clicks_30d,epc,bonus_text_on_site)</label>
+<input type="file" id="csv" accept=".csv"/>
+<label class="f">Targets (editable — CSV fills this table)</label>
+<table id="targets"><thead><tr><th>URL</th><th>Anchor</th><th>Operator</th><th>Network</th><th>Geo</th><th>Device</th><th>Clicks30d</th><th>EPC</th><th>Bonus on site</th><th></th></tr></thead><tbody></tbody></table>
+<div class="rowbtns"><button class="btn ghost" onclick="addRow()">+ Add target</button></div>
+<div class="grid3">
+<div><label class="f">Desktop user-agent</label><input type="text" id="ua_d"/></div>
+<div><label class="f">Mobile user-agent</label><input type="text" id="ua_m"/></div>
+<div><label class="f">Crawl speed (concurrency)</label><input type="number" id="concurrency" value="8"/></div>
+<div><label class="f">Crawl depth</label><input type="number" id="depth" value="3"/></div>
+<div><label class="f">Path exclusions (comma separated)</label><input type="text" id="exclude" value="/blog/,/news/,/wp-admin/"/></div>
+</div></div>
+
+<div class="card"><h2><span class="n">2</span>Affiliate Tracking &amp; Parameter Rule Engine</h2>
+<p class="d">Regexes must match a param key at hop 0 and survive every hop. Network mappings enforce operator → tracking-domain routing.</p>
+<div class="grid2">
+<div><label class="f">Primary affiliate IDs (regex)</label><textarea id="rx_ids">(btag|affid|clickid|a_aid|cmp)</textarea></div>
+<div><label class="f">Dynamic sub-IDs (regex)</label><textarea id="rx_sub">(subid|s1|s2|p1|sub_id)</textarea></div>
+<div><label class="f">Promo / offer IDs (regex)</label><textarea id="rx_promo">(promocode|promo|bonus|offer|gclid|dclid)</textarea></div>
+<div><label class="f">Network mappings — one per line: operator=domain1,domain2</label><textarea id="netmap">bet365=incomeaccess,bet365affiliates
+draftkings=everflow,draftkings
+betmgm=cellxpert,betmgm
+williamhill=netrefer,williamhill</textarea></div>
+</div></div>
+
+<div class="card"><h2><span class="n">3</span>Simulation &amp; Execution Environment</h2>
+<p class="d">Geo nodes pin test origin to the licence jurisdiction; execution depth escalates HTTP → headless on JS redirects.</p>
+<div class="grid3">
+<div><label class="f">Default geo node</label><select id="g_geo"><option>US-NJ</option><option>UK</option><option>CA-ON</option></select></div>
+<div><label class="f">Default device profile</label><select id="g_dev"><option value="desktop_chrome">Desktop · Chrome/Win</option><option value="desktop_edge">Desktop · Edge/Win</option><option value="mobile_ios">Mobile · iOS Safari</option><option value="mobile_android">Mobile · Android Chrome</option></select></div>
+<div><label class="f">Execution depth</label><select id="exec"><option value="hybrid">Hybrid (HTTP → headless on JS)</option><option value="http_only">HTTP header fetch only</option><option value="headless_only">Headless always</option></select></div>
+<div><label class="f">Max hops</label><input type="number" id="maxhops" value="12"/></div>
+<div><label class="f">Timeout (s)</label><input type="number" id="timeout" value="20"/></div>
+</div>
+<label class="f">Residential proxy nodes (one per line: GEO=endpoint — session routing notes)</label>
+<textarea id="proxies">US-NJ=residential-us-east (New Jersey exit)
+UK=residential-uk-london (London exit)
+CA-ON=residential-ca-toronto (Toronto exit)</textarea>
+</div>
+
+<div class="card"><h2><span class="n">4</span>Regulatory &amp; Compliance Rules</h2>
+<p class="d">Required strings and licence badges are scraped from the final lander per geo pack.</p>
+<div class="grid3">
+<div><label class="f">US-NJ required strings (comma)</label><input type="text" id="c_nj" value="21+,1-800-GAMBLER,T&Cs Apply,Gambling Problem"/></div>
+<div><label class="f">US-NJ badges (comma)</label><input type="text" id="b_nj" value="NJ DGE,DGE"/></div>
+<div><label class="f">UK required strings (comma)</label><input type="text" id="c_uk" value="18+,BeGambleAware.org,T&Cs Apply,GamStop"/></div>
+<div><label class="f">UK badges (comma)</label><input type="text" id="b_uk" value="UKGC,GamStop"/></div>
+<div><label class="f">CA-ON required strings (comma)</label><input type="text" id="c_on" value="19+,ConnexOntario,T&Cs Apply"/></div>
+<div><label class="f">CA-ON badges (comma)</label><input type="text" id="b_on" value="AGCO,iGaming Ontario"/></div>
+</div>
+<label class="f">Soft-404 / expired-offer phrases (comma)</label>
+<input type="text" id="soft404" value="promotion has expired,offer closed,offer has ended,page not found,no longer available"/>
+</div>
+
+<div class="card"><h2><span class="n">5</span>Business Data &amp; Revenue Context</h2>
+<div class="grid3">
+<div><label class="f">Default EPC ($)</label><input type="number" step="0.01" id="d_epc" value="1.25"/></div>
+<div><label class="f">Default clicks / 30d</label><input type="number" id="d_clicks" value="1000"/></div>
+<div><label class="f">Latency warn (ms)</label><input type="number" id="lat_warn" value="900"/></div>
+<div><label class="f">Latency critical / drop-off (ms)</label><input type="number" id="lat_crit" value="1800"/></div>
+</div><p class="d">Per-target clicks &amp; EPC override these defaults in the targets table (GA4/Search Console values go there).</p></div>
+
+<div class="card"><h2><span class="n">6</span>Real-Time Affiliate Program API Credentials</h2>
+<p class="d">Session-only — sent with the run for live campaign sync where supported, never stored on disk.</p>
+<div class="grid3">
+<div><label class="f">Platform</label><select id="aff_plat"><option>Cellxpert</option><option>Income Access</option><option>NetRefer</option><option>MyAffiliates</option><option>Everflow</option></select></div>
+<div><label class="f">Username / Account ID</label><input type="text" id="aff_user" placeholder="affiliate_ops"/></div>
+<div><label class="f">API key</label><input type="password" id="aff_key" placeholder="••••••"/></div>
+</div></div>
+
+<div class="card"><h2><span class="n">7</span>Ad-Blocker &amp; Privacy Rule Feeds</h2>
+<div class="chk"><input type="checkbox" id="ab_ublock" checked/> uBlock Origin</div>
+<div class="chk"><input type="checkbox" id="ab_easylist" checked/> EasyList</div>
+<div class="chk"><input type="checkbox" id="ab_brave" checked/> Brave Shields</div>
+<div class="chk"><input type="checkbox" id="ab_itp" checked/> Safari ITP</div>
+<div class="chk"><input type="checkbox" id="ab_etp" checked/> Firefox ETP</div>
+</div>
+
+<div class="card"><h2><span class="n">8</span>Live Operator Promotional Feeds</h2>
+<label class="f">API / RSS / JSON feed URLs (one per line)</label>
+<textarea id="promofeeds" placeholder="https://operator.com/affiliates/promos.json"></textarea></div>
+
+<div class="card"><h2><span class="n">9</span>Server Log Files (CDN &amp; Edge Logs)</h2>
+<label class="f">Paste Cloudflare / Fastly log lines, or upload a log file (outbound /out/ /go/ click events are counted)</label>
+<textarea id="edgelogs" placeholder='127.0.0.1 - - [05/Sep/2026] "GET /out/bet365?btag=1 HTTP/1.1" 302'></textarea>
+<input type="file" id="logfile" accept=".log,.txt"/></div>
+
+<div class="card"><h2><span class="n">10</span>Historical Conversion Rate Baselines</h2>
+<label class="f">One per line: operator,click-to-register %,click-to-deposit %</label>
+<textarea id="baselines">bet365,8.5,2.1
+draftkings,9.2,2.4
+betmgm,7.8,1.9
+williamhill,6.5,1.6</textarea></div>
+
+<div class="card" style="text-align:center">
+<div class="rowbtns" style="justify-content:center"><button class="btn ghost" id="verifybtn" onclick="verifyInputs()">✔ VERIFY EVERY INPUT FIELD LIVE</button></div>
+<div id="verifybox" style="font-size:13px;color:var(--mut);text-align:left"></div>
+<div id="runmsg" style="margin:10px 0;color:var(--mut)">Configure layers 1–10, then launch the full enterprise audit.</div>
+<button class="btn" id="runbtn" onclick="runAnalysis()">▶ RUN FULL ANALYSIS</button>
+</div>
+<div class="card" id="livecard" style="display:none;border-color:var(--accent)">
+<div class="logbar"><div><b>🔴 LIVE</b> <span style="color:var(--mut)">engine log — streaming as chains complete</span></div>
+<div class="timer">⏱ <span id="livetimer">00:00</span> · <span id="jobpct" style="font-size:13px">0/? chains</span></div></div>
+<div class="progress"><div id="jobbar"></div></div>
+<pre id="livelog">waiting for engine…</pre>
+</div>
+</main>
+<script src="common.js?v=3"></script>
+<script>
+const GEOS=["US-NJ","UK","CA-ON"], DEVS=["desktop_chrome","desktop_edge","mobile_ios","mobile_android"];
+function addRow(d={}){
+  const tb=document.querySelector("#targets tbody"), tr=document.createElement("tr");
+  tr.innerHTML=`<td><input type="text" data-k="source_url" style="min-width:220px" value="${d.source_url||""}"/></td>
+  <td><input type="text" data-k="anchor_text" value="${d.anchor_text||""}"/></td>
+  <td><input type="text" data-k="expected_operator" value="${d.expected_operator||""}"/></td>
+  <td><input type="text" data-k="expected_network" value="${d.expected_network||""}"/></td>
+  <td><select data-k="geo">${GEOS.map(g=>`<option ${g===(d.geo||"US-NJ")?"selected":""}>${g}</option>`).join("")}</select></td>
+  <td><select data-k="device">${DEVS.map(x=>`<option ${x===(d.device||"desktop_chrome")?"selected":""}>${x}</option>`).join("")}</select></td>
+  <td><input type="number" data-k="clicks_30d" value="${d.clicks_30d??1000}"/></td>
+  <td><input type="number" step="0.01" data-k="epc" value="${d.epc??1.25}"/></td>
+  <td><input type="text" data-k="bonus_text_on_site" value="${d.bonus_text_on_site||""}"/></td>
+  <td><button class="btn ghost" onclick="this.closest('tr').remove()">✕</button></td>`;
+  tb.appendChild(tr);
+}
+document.querySelector("#csv").addEventListener("change",ev=>{
+  const f=ev.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ const [head,...lines]=r.result.split(/\r?\n/); const H=head.split(",").map(s=>s.trim());
+    lines.filter(Boolean).forEach(ln=>{ const cells=ln.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/).map(s=>s.trim().replace(/^"|"$/g,""));
+      const o={}; H.forEach((h,i)=>o[h]=cells[i]||""); o.clicks_30d=+o.clicks_30d||1000; o.epc=+o.epc||1.25; addRow(o); }); };
+  r.readAsText(f);
+});
+document.querySelector("#targets tbody").addEventListener("input",e=>{ const tr=e.target.closest("tr"); if(tr) tr.dataset.v="1"; });
+document.querySelector("#logfile").addEventListener("change",ev=>{
+  const f=ev.target.files[0]; if(!f) return;
+  const r=new FileReader(); r.onload=()=>{ document.querySelector("#edgelogs").value+= "\n"+r.result.slice(0,20000); }; r.readAsText(f);
+});
+function rows(){
+  return [...document.querySelectorAll("#targets tbody tr")].map(tr=>{
+    const o={}; tr.querySelectorAll("[data-k]").forEach(el=>o[el.dataset.k]=el.value);
+    o.clicks_30d=+o.clicks_30d||0; o.epc=+o.epc||0; o.revenue_verified=(tr.dataset.v==="1"); return o;
+  }).filter(o=>o.source_url);
+}
+const csv2list=id=>document.querySelector(id).value.split(",").map(s=>s.trim()).filter(Boolean);
+function netmap(){
+  const m={}; document.querySelector("#netmap").value.split("\n").forEach(ln=>{
+    const [k,...rest]=ln.split("="); if(k&&rest.length) m[k.trim().toLowerCase()]=rest.join("=").split(",").map(s=>s.trim()).filter(Boolean); });
+  return m;
+}
+async function verifyInputs(){
+  const box=document.querySelector("#verifybox"), btn=document.querySelector("#verifybtn");
+  btn.disabled=true; box.innerHTML=`<span class="spin"></span> Verifying every input live — sitemaps, URLs, regexes, feeds, mappings…`;
+  const trows=rows();
+  const pasted=document.querySelector("#pasted").value.split("\n").map(s=>s.trim()).filter(s=>s&&!s.startsWith("#"));
+  const body={sitemaps:document.querySelector("#sitemaps").value.split("\n"),
+    urls:[...trows.map(r=>r.source_url),...pasted].slice(0,80),
+    regex_ids:document.querySelector("#rx_ids").value, regex_sub:document.querySelector("#rx_sub").value,
+    regex_promo:document.querySelector("#rx_promo").value,
+    netmap:document.querySelector("#netmap").value.split("\n"),
+    feeds:document.querySelector("#promofeeds").value.split("\n"),
+    baselines:document.querySelector("#baselines").value.split("\n"),
+    default_epc:+document.querySelector("#d_epc").value||0};
+  try{
+    const r=await fetch(API+"/utils/verify-inputs",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    const v=await r.json();
+    document.querySelector("#sitemaps").value=v.sitemaps.map(s=>s.live?`${s.url}  # ✅ LIVE (${s.urls} urls)`:`# ❌ DEAD [HTTP ${s.http??"×"}] ${s.url} — ${s.note}`).join("\n");
+    const deadU=(v.urls||[]).filter(u=>!u.live);
+    const ok=(n,total)=>`${n===total?"✅":"⚠"} ${n}/${total}`;
+    box.innerHTML=`<b>Layer 1 sitemaps:</b> ${ok(v.sitemaps.filter(s=>s.live).length,v.sitemaps.length)} live`+
+      (v.sitemaps.filter(s=>!s.live).length?`<br/><span style="color:var(--red)">Dead: ${v.sitemaps.filter(s=>!s.live).map(s=>s.url).join(", ")}</span> — marked ❌ in the field, skipped at run time`:"")+
+      `<br/><b>Layer 1 URLs:</b> ${ok(v.urls.filter(u=>u.live).length,v.urls.length)} reachable`+(deadU.length?`<br/><span style="color:var(--red)">Dead URLs: ${deadU.map(u=>`${u.url} (${u.note})`).join(", ")}</span>`:"")+
+      `<br/><b>Layer 2 regex:</b> ids ${v.regex.ids.ok?"✅":"❌ "+v.regex.ids.error} · sub ${v.regex.sub.ok?"✅":"❌ "+v.regex.sub.error} · promo ${v.regex.promo.ok?"✅":"❌ "+v.regex.promo.error}`+
+      `<br/><b>Layer 2 netmap:</b> ${v.netmap.ok?`✅ ${v.netmap.parsed} mappings`:`❌ bad lines: ${v.netmap.bad.join("; ")}`}`+
+      `<br/><b>Layer 5 EPC default:</b> ${v.epc_ok?"✅ $"+body.default_epc:"❌ must be > 0"}`+
+      `<br/><b>Layer 8 feeds:</b> ${ok(v.feeds.filter(f=>f.live).length,v.feeds.length)} live`+
+      `<br/><b>Layer 10 baselines:</b> ${v.baselines.ok?`✅ ${v.baselines.parsed} rows`:`❌ ${v.baselines.bad.join("; ")}`}`;
+  }catch(e){ box.textContent="Verify failed: "+e; }
+  btn.disabled=false;
+}
+let _timer=null;
+async function pollJob(id,msg,btn){
+  const log=document.querySelector("#livelog"), bar=document.querySelector("#jobbar");
+  document.querySelector("#livecard").style.display="";
+  log.innerHTML=""; bar.style.width="0%";
+  clearInterval(_timer);
+  _timer=setInterval(()=>{ const el=document.querySelector("#livetimer"); if(el && !window._jobDone) el.textContent=fmtTime((Date.now()-window._jobT0)/1000); },250);
+  window._jobT0=Date.now(); window._jobDone=false;
+  let shown=0;
+  while(true){
+    await new Promise(r=>setTimeout(r,1000));
+    const r=await fetch(API+"/audit/job/"+id); const j=await r.json();
+    document.querySelector("#livetimer").textContent=fmtTime(j.elapsed||0);
+    (j.logs||[]).slice(shown).forEach(l=>{ log.innerHTML+=l.replace(/</g,"&lt;")+"\n"; });
+    shown=(j.logs||[]).length; log.scrollTop=log.scrollHeight;
+    const pct=j.total?Math.round(j.done/j.total*100):0;
+    bar.style.width=pct+"%";
+    document.querySelector("#jobpct").textContent=`${j.done||0}/${j.total||"?"} chains · ${pct}%`;
+    if(j.status==="done"){ window._jobDone=true; clearInterval(_timer); msg.innerHTML=`✅ Done in ${fmtTime(j.elapsed)} — opening analysis…`; return j.result; }
+    if(j.status==="error"||j.status==="unknown"){ window._jobDone=true; clearInterval(_timer); msg.textContent="Job failed: "+(j.error||j.status); btn.disabled=false; return null; }
+  }
+}
+async function runAnalysis(){
+  const btn=document.querySelector("#runbtn"), msg=document.querySelector("#runmsg");
+  btn.disabled=true; msg.innerHTML=`<span class="spin"></span> Tracing chains live — multi-hop HTTP + headless escalation, param audit, latency, compliance…`;
+  const body={
+    targets:rows(), pasted_urls:document.querySelector("#pasted").value,
+    sitemap_urls:document.querySelector("#sitemaps").value.split("\n").map(s=>s.trim()).filter(Boolean),
+    sitemap_limit:+document.querySelector("#sitemap_limit").value||50,
+    global_geo:document.querySelector("#g_geo").value, global_device:document.querySelector("#g_dev").value,
+    settings:{
+      audit:{max_hops:+document.querySelector("#maxhops").value||12, timeout_seconds:+document.querySelector("#timeout").value||20,
+             concurrency:+document.querySelector("#concurrency").value||8, execution_mode:document.querySelector("#exec").value},
+      tracking_rules:{required_param_patterns:[document.querySelector("#rx_ids").value,document.querySelector("#rx_sub").value],
+                      promo_patterns:[document.querySelector("#rx_promo").value], network_mappings:netmap()},
+      compliance_packs:{"US-NJ":{required_strings:csv2list("#c_nj"),license_badges:csv2list("#b_nj")},
+                        "UK":{required_strings:csv2list("#c_uk"),license_badges:csv2list("#b_uk")},
+                        "CA-ON":{required_strings:csv2list("#c_on"),license_badges:csv2list("#b_on")}},
+      latency:{warn_threshold_ms:+document.querySelector("#lat_warn").value||900, drop_off_threshold_ms:+document.querySelector("#lat_crit").value||1800},
+      revenue:{default_epc:+document.querySelector("#d_epc").value||1.25},
+      soft404_phrases:csv2list("#soft404")
+    }
+  };
+  const extras={aff_platform:document.querySelector("#aff_plat").value, aff_user:document.querySelector("#aff_user").value,
+    aff_key_set:!!document.querySelector("#aff_key").value,
+    adblock:{ublock:ab_ublock.checked,easylist:ab_easylist.checked,brave:ab_brave.checked,itp:ab_itp.checked,etp:ab_etp.checked},
+    promofeeds:document.querySelector("#promofeeds").value, edgelogs:document.querySelector("#edgelogs").value,
+    baselines:document.querySelector("#baselines").value, proxies:document.querySelector("#proxies").value};
+  try{
+    const jr=await fetch(API+"/audit/job",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    const {job_id}=await jr.json();
+    const out=await pollJob(job_id,msg,btn);
+    if(!out) return;
+    if(out.error){ msg.textContent=out.error; btn.disabled=false; return; }
+    store.set("pf_result",out); store.set("pf_input",extras);
+    location.href="analysis.html";
+  }catch(e){ msg.textContent="API unreachable at "+(API||"same-origin")+":8099 — is the server running? ("+e+")"; btn.disabled=false; }
+}
+async function autofill(){
+  const site=document.querySelector("#af_site").value.trim();
+  const msg=document.querySelector("#afmsg"), btn=document.querySelector("#afbtn");
+  if(!site){ msg.textContent="Enter a website URL first."; return; }
+  btn.disabled=true;
+  const _aft0=Date.now(); clearInterval(window._afT);
+  window._afT=setInterval(()=>{ btn.textContent=`🔍 PROFILING… ${fmtTime((Date.now()-_aft0)/1000)}`; },250);
+  msg.innerHTML=`<span class="spin"></span> Deep-profiling ${site} — identity, sitemaps, crawl, link verification, tracking-key mining… (up to several minutes for big sites)`;
+  try{
+    const r=await fetch(API+"/utils/autofill",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({site_url:site,max_pages:+document.querySelector("#af_pages").value||25})});
+    const out=await r.json();
+    if(out.error){ clearInterval(window._afT); btn.textContent="🔍 AUTO-FILL ALL FIELDS FROM SITE"; msg.textContent=out.error; btn.disabled=false; return; }
+    const B=out.business||{};
+    // ---- L1 targets + pasted + sitemaps + cap + excludes ----
+    document.querySelector("#targets tbody").innerHTML="";
+    (out.targets||[]).forEach(t=>addRow(t));
+    const sms=[...(out.sitemaps_status||[]).filter(s=>s.live).map(s=>`${s.url}  # ✅ LIVE (${s.urls} urls)`),
+               ...((out.sitemaps_status||[]).filter(s=>!s.live).map(s=>`# ❌ DEAD [HTTP ${s.http??"×"}] ${s.url} — ${s.note}`))];
+    const _g=(out.sitemap_guesses||[]).filter(g=>!(out.sitemaps_verified||[]).includes(g));
+    if(sms.length||_g.length) document.querySelector("#sitemaps").value=[...sms,..._g].join("\n");
+    const urls=(out.targets||[]).map(t=>t.source_url);
+    if(urls.length){ document.querySelector("#pasted").value=urls.join("\n"); document.querySelector("#sitemap_limit").value=Math.max(50,urls.length); }
+    if(out.exclude_paths_suggested?.length) document.querySelector("#exclude").value=out.exclude_paths_suggested.join(",");
+    window._afTargets=out.targets||[];
+    clearInterval(window._afT); btn.textContent="🔍 AUTO-FILL ALL FIELDS FROM SITE";
+    document.querySelector("#afcsvrow").style.display=urls.length?"":"none";
+    // ---- L2 regex additions (only keys not already covered) + network map merge ----
+    (out.suggested_regex_additions||[]).forEach(k=>{
+      const el=document.querySelector("#rx_ids");
+      try{ if(!new RegExp(el.value,"i").test(k)) el.value=`${el.value.slice(0,-1)}|${k})`; }catch(e){}
+    });
+    const nmLines=document.querySelector("#netmap").value.split("\n").map(s=>s.trim()).filter(Boolean);
+    const nmMap={}; nmLines.forEach(l=>{const [k,...r]=l.split("="); if(k) nmMap[k.trim().toLowerCase()]=r.join("=");});
+    Object.entries(out.observed_network_map||{}).forEach(([op,doms])=>{
+      const cur=new Set([...(nmMap[op]||"").split(",").map(s=>s.trim()).filter(Boolean),...doms.map(d=>d.toLowerCase())]);
+      nmMap[op]=[...cur].join(",");
+    });
+    document.querySelector("#netmap").value=Object.entries(nmMap).map(([k,v])=>`${k}=${v}`).join("\n");
+    // ---- L3 geo + L6 platform + L8 feeds + L9 recipe + L10 baselines ----
+    if(out.geo_guess) document.querySelector("#g_geo").value=out.geo_guess;
+    if(out.affiliate_platform_hint){ const s=document.querySelector("#aff_plat"); [...s.options].forEach(o=>{if(o.text===out.affiliate_platform_hint) s.value=o.text;}); }
+    if(out.promo_feeds?.length) document.querySelector("#promofeeds").value=out.promo_feeds.join("\n");
+    if(out.log_recipe) document.querySelector("#edgelogs").value=out.log_recipe;
+    if(out.baselines_ranked?.length) document.querySelector("#baselines").value=out.baselines_ranked.join("\n");
+    const dead=(out.targets||[]).filter(t=>t.link_status>=400||String(t.link_status).startsWith("ERR")).length;
+    const cov=out.compliance_coverage?.[out.geo_guess];
+    msg.innerHTML=`✅ <b>${urls.length} targets</b> · ${out.pages_crawled} pages · ${out.links_scanned} links · ${out.duration_s}s` +
+      `<br/>🏢 <b>${B.title||B.host}</b> · IP ${B.ip||"?"} · hosting: ${B.hosting_org||"unknown"} · tech: ${(B.tech||[]).join(", ")||"?"} · CDN: ${B.cdn||"—"}` +
+      `<br/>🗺 geo <b>${out.geo_guess}</b> (hreflang: ${(out.geo_signals?.hreflangs||[]).join(", ")||"—"} · currencies: ${JSON.stringify(out.geo_signals?.currencies||{})})` +
+      `<br/>🔑 observed tracking keys: ${Object.entries(out.observed_param_keys||{}).slice(0,12).map(([k,c])=>`${k}×${c}`).join(", ")||"—"} → appended: ${(out.suggested_regex_additions||[]).join(", ")||"none new"}` +
+      `<br/>🔗 live link check: ${urls.length-dead}/${urls.length} OK${dead?` · <b style="color:var(--red)">${dead} dead</b>`:""} · sitemaps LIVE: ${(out.sitemaps_status||[]).filter(s=>s.live).length}/${(out.sitemaps_status||[]).length} (${out.sitemap_page_count||0} urls indexed) · wayback historical: ${out.wayback_targets||0}` +
+      `<br/>🛡 source-site compliance coverage (${out.geo_guess}): found [${(cov?.found||[]).join(", ")}] · missing [${(cov?.missing||[]).join(", ")}]` +
+      (out.warnings?.length?`<br/>⚠ ${out.warnings.join("; ")}`:"") + `<br/><span style="color:var(--mut)">${out.note||""}</span>`;
+  }catch(e){ msg.textContent="Autofill failed: "+e; }
+  clearInterval(window._afT); btn.textContent="🔍 AUTO-FILL ALL FIELDS FROM SITE"; btn.disabled=false;
+}
+// Fresh start on every load/refresh: wipe prior run + demo data so the user fetches.
+sessionStorage.removeItem("pf_result"); sessionStorage.removeItem("pf_input");
+try { localStorage.removeItem("pf_pf_result"); localStorage.removeItem("pf_pf_input"); } catch (e) {}
+// backend defaults for UA prefill only (no demo targets — table starts empty)
+getDefaults().then(d=>{ ua_d.value=d.audit?.user_agent_desktop||""; ua_m.value=d.audit?.user_agent_mobile_ios||""; }).catch(()=>{});
+</script>
+</body>
+</html>

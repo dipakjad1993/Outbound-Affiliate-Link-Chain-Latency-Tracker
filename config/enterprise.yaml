@@ -1,0 +1,62 @@
+# Enterprise audit configuration — edit to match your portfolio
+audit:
+  max_hops: 12
+  timeout_seconds: 20
+  concurrency: 8
+  execution_mode: hybrid        # http_only | hybrid | headless_only
+  user_agent_desktop: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
+  user_agent_mobile_ios: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1"
+  user_agent_mobile_android: "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Mobile Safari/537.36"
+
+tracking_rules:
+  required_param_patterns:
+    - "(btag|affid|clickid|a_aid|cmp)"
+    - "(subid|s1|s2|p1|sub_id)"
+  promo_patterns:
+    - "(promocode|promo|bonus|offer|gclid|dclid)"
+  network_mappings:           # operator -> must-pass-through domains
+    bet365: ["incomeaccess", "bet365affiliates"]
+    draftkings: ["everflow", "draftkings"]
+    betmgm: ["cellxpert", "betmgm"]
+    williamhill: ["netrefer", "williamhill"]
+
+geo_profiles:
+  US-NJ: { country: US, region: New_Jersey, currency: USD, age_gate: "21+", license: "NJ DGE" }
+  UK:    { country: GB, region: London,    currency: GBP, age_gate: "18+", license: "UKGC" }
+  CA-ON: { country: CA, region: Ontario,   currency: CAD, age_gate: "19+", license: "AGCO" }
+
+compliance_packs:
+  US-NJ: { required_strings: ["21+", "1-800-GAMBLER", "T&Cs Apply", "Gambling Problem"], license_badges: ["NJ DGE", "DGE"], min_age: 21 }
+  UK:    { required_strings: ["18+", "BeGambleAware.org", "T&Cs Apply", "GamStop"], license_badges: ["UKGC", "GamStop"], min_age: 18 }
+  CA-ON: { required_strings: ["19+", "ConnexOntario", "T&Cs Apply"], license_badges: ["AGCO", "iGaming Ontario"], min_age: 19 }
+
+latency:
+  drop_off_threshold_ms: 1800
+  warn_threshold_ms: 900
+  four_g_penalty_factor: 1.35
+
+revenue:
+  default_epc: 1.25
+  default_clicks_30d: 1000
+
+alerting:
+  slack_webhook: ""
+  teams_webhook: ""
+  email_to: []
+  break_on_high_value_clicks: 5000
+
+crawl:
+  respect_robots: true
+  max_depth: 3
+  exclude_paths: ["/blog/", "/news/", "/wp-admin/"]
+  include_affiliate_path_hints: ["/out/", "/go/", "/visit/", "/redirect", "btag", "affid", "clickid"]
+
+soft404_phrases:
+  - "promotion has expired"
+  - "offer closed"
+  - "offer has ended"
+  - "page not found"
+  - "no longer available"
+  - "account migrated"
+  - "brand has closed"
+  - "404"

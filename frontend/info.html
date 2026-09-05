@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Outbound Affiliate Link Chain &amp; Latency Tracker — Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="styles.css?v=3"/>
+</head>
+<body>
+<header class="top">
+<div class="brand"><h1>Outbound Affiliate Link Chain <span>&amp; Latency Tracker</span></h1>
+<div class="tagline">Enterprise revenue-guarding engine for iGaming affiliate redirect chains — live multi-hop tracing, param-loss fingerprinting, latency profiling, compliance guardianship and edge auto-healing.</div>
+<div class="crumb" id="crumb">Documentation</div></div>
+<div class="headright"><button class="btn ghost" id="themebtn" onclick="toggleTheme()">☀️ Light mode</button>
+<nav class="docnav"><a href="index.html">Tool</a> · <a href="info.html?p=about">About</a> · <a href="info.html?p=why2026">Why 2026</a> · <a href="info.html?p=features">Features</a> · <a href="info.html?p=inputs">Inputs</a> · <a href="info.html?p=outputs">Outputs</a> · <a href="info.html?p=impact">Impact</a></nav></div>
+</header>
+<main>
+<div class="toc" id="toc"></div>
+<div class="card"><h2 id="doctitle">Loading…</h2><p class="d" id="docsub"></p><p class="d" id="docintro"></p><div id="docblocks"></div></div>
+<p class="d">These pages render live from the tool's own content source (<span class="mono">site_content.py</span> via <span class="mono">GET /content</span>) — update the tool and the docs update themselves. <a href="index.html">← Back to the tool</a></p>
+</main>
+<script src="common.js?v=3"></script>
+<script>
+(async function(){
+  const key = new URLSearchParams(location.search).get("p") || "about";
+  const toc = document.querySelector("#toc");
+  try {
+    const r = await fetch(API + "/content");
+    const { nav, sections } = await r.json();
+    toc.innerHTML = nav.map(([k, label]) => `<a href="info.html?p=${k}" class="${k === key ? "on" : ""}">${label}</a>`).join("");
+    const s = sections[key] || sections.about;
+    doctitle.textContent = s.title; docsub.textContent = s.subtitle; docintro.textContent = s.intro;
+    crumb.textContent = "Documentation · " + s.title;
+    document.title = s.title + " — Outbound Affiliate Link Chain & Latency Tracker";
+    docblocks.innerHTML = (s.blocks || []).map(b =>
+      `<h3>${b.h}</h3>${b.text ? `<p class="d">${b.text}</p>` : ""}` +
+      ((b.bullets || []).length ? `<ul class="tight">${b.bullets.map(x => `<li>${x}</li>`).join("")}</ul>` : "")
+    ).join("");
+  } catch(e) { doctitle.textContent = "Docs unavailable — is the API running on :8099? (" + e + ")"; }
+})();
+</script>
+</body>
+</html>

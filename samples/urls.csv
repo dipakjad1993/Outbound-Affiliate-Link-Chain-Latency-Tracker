@@ -1,0 +1,6 @@
+source_url,anchor_text,expected_operator,expected_network,geo,device,clicks_30d,epc,bonus_text_on_site
+https://httpbin.org/redirect/3,Bet365 Review CTA,bet365,IncomeAccess,US-NJ,desktop_chrome,12500,1.85,"Deposit $10 Get $50"
+https://httpbin.org/redirect-to?url=https://example.com&status_code=302,DraftKings Promo Box,draftkings,Everflow,US-NJ,mobile_ios,8300,2.10,"Bet $5 Get $200"
+https://httpbin.org/status/404,BetMGM Dead Offer Test,betmgm,Cellxpert,UK,mobile_android,5200,1.40,"Deposit £10 Get £40"
+https://httpbin.org/response-headers?Location=https://example.com%3Fbtag%3D1234%26affid%3D5678&status=302,Param Survival Test,williamhill,NetRefer,UK,desktop_chrome,3100,0.95,"Bet £10 Get £30"
+https://example.com,Clean 200 Control,bet365,IncomeAccess,CA-ON,desktop_edge,1500,1.20,"Deposit $10 Get $50"

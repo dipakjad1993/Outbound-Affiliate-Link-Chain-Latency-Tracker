@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Outbound Affiliate Link Chain &amp; Latency Tracker — Outputs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="styles.css?v=3"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<header class="top">
+<div class="brand"><h1>Outbound Affiliate Link Chain <span>&amp; Latency Tracker</span></h1>
+<div class="tagline">Enterprise revenue-guarding engine for iGaming affiliate redirect chains — live multi-hop tracing, param-loss fingerprinting, latency profiling, compliance guardianship and edge auto-healing.</div>
+<div class="crumb">Page 3 · Enterprise outputs — revenue, engineering, legal</div></div>
+<div class="headright"><button class="btn ghost" id="themebtn" onclick="toggleTheme()">☀️ Light mode</button>
+<div class="steps"><div class="step">1 Inputs</div><div class="step">2 Analysis</div><div class="step on">3 Outputs</div></div>
+<nav class="docnav"><a href="index.html">Tool</a> · <a href="info.html?p=about">About</a> · <a href="info.html?p=why2026">Why 2026</a> · <a href="info.html?p=features">Features</a> · <a href="info.html?p=inputs">Inputs</a> · <a href="info.html?p=outputs">Outputs</a> · <a href="info.html?p=impact">Impact</a></nav></div>
+</header>
+<main id="root"><p style="color:var(--mut)">Loading outputs…</p></main>
+<main><div class="card" style="text-align:center"><button class="btn ghost" onclick="location.href='analysis.html'">← Back to analysis</button>
+<span style="margin-left:12px"></span><button class="btn ghost" onclick="location.href='index.html'">↺ New audit</button></div></main>
+<script src="common.js?v=3"></script>
+<script>
+const R = store.get("pf_result", null), IN = store.get("pf_input", {});
+if (!R) { document.querySelector("#root").innerHTML = `<div class="card"><h2>No outputs found</h2><button class="btn" onclick="location.href='index.html'">← Go to Page 1</button></div>`; }
+else {
+const C = R.chains || [], root = document.querySelector("#root");
+const base = {};
+(IN.baselines||"").split("\n").forEach(l=>{const p=l.split(","); if(p.length>=3) base[p[0].trim().toLowerCase()]={ctr:+p[1]||0, ctd:+p[2]||0};});
+let h = "";
+
+// O1 — executive dashboard
+h += `<div class="card"><h2><span class="n">O1</span>Executive Revenue Risk Dashboard</h2><div class="kpis">
+<div class="kpi"><div class="l">Total revenue at risk (30d)</div><div class="v" style="color:var(--red)">$${(R.revenue_at_risk||0).toLocaleString()}</div></div>
+<div class="kpi"><div class="l">Link Health Index</div><div class="v">${R.health_index}/100</div></div>
+<div class="kpi"><div class="l">Avg chain latency</div><div class="v">${Math.round(C.reduce((s,c)=>s+(c.latency?.total_ms||0),0)/Math.max(1,C.length))}ms</div></div>
+<div class="kpi"><div class="l">Est. regs lost*</div><div class="v">${Math.round(C.filter(c=>!c.chain_ok||!c.params_intact).reduce((s,c)=>{const b=base[(c.expected_operator||"").toLowerCase()]||{ctr:8,ctd:2};return s+c.clicks_30d*b.ctr/100;},0)).toLocaleString()}</div></div>
+<div class="kpi"><div class="l">Est. deposits lost*</div><div class="v">${Math.round(C.filter(c=>!c.chain_ok||!c.params_intact).reduce((s,c)=>{const b=base[(c.expected_operator||"").toLowerCase()]||{ctr:8,ctd:2};return s+c.clicks_30d*b.ctd/100;},0)).toLocaleString()}</div></div>
+</div><p class="d">* regs/deposits from layer-10 CTR/CTD baselines × broken-chain clicks. Revenue basis: ${C.filter(c=>c.revenue_verified).length}/${C.length} chains VERIFIED (hand-edited GA4 clicks + EPC) — the rest are reach-scaled estimates, labelled per chain.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px"><div><canvas id="chH" height="150"></canvas></div><div><canvas id="chL" height="150"></canvas></div></div></div>`;
+
+// O2 — action center
+h += `<div class="card"><h2><span class="n">O2</span>Technical SEO &amp; Engineering Action Center</h2>
+<div class="rowbtns"><button class="btn ghost" id="pdfbtn" onclick="dlPDF()">⬇ Full PDF report (real PDF)</button><button class="btn ghost" onclick="dlCSV()">⬇ CSV report</button><button class="btn ghost" onclick="dlJSON()">⬇ JSON report</button><button class="btn ghost" onclick="dlJIRA()">⬇ JIRA tickets</button></div>
+<table><thead><tr><th>#</th><th>Source → Final</th><th>Chain map</th><th>Failure point</th></tr></thead><tbody>` +
+C.map((c,i)=>{const bad=c.hops?.find(x=>(x.status>=400)||x.error)||(c.params_intact?"":c.hops?.[c.param_events?.[0]?.stripped_at_hop??-1]);
+return `<tr><td>${i+1}</td><td style="word-break:break-all">${c.source_url}<br/>↳ ${c.final_url} ${statusBadge(c.final_status)}<br/><span style="color:var(--mut)">${c.anchor_text||""}</span></td><td>${hopMapHTML(c)}</td><td>${c.chain_ok&&c.params_intact?badge("healthy","ok"):badge(c.broken_reason||"param-loss","fail")}</td></tr>`;}).join("") + `</tbody></table>
+<h3 style="font-size:14px">Developer tickets (JIRA / Trello / ClickUp ready — ${(R.jira||[]).length})</h3><pre>${JSON.stringify(R.jira||[],null,2).slice(0,4000)}</pre></div>`;
+
+// O3 — latency report
+const sla=[...(R.sla||[])].sort((a,b)=>b.avg_latency_ms-a.avg_latency_ms);
+h += `<div class="card"><h2><span class="n">O3</span>Latency &amp; Core Web Vitals Impact Report</h2>
+<h3 style="font-size:14px">Redirect speed scorecard (slowest → fastest)</h3><table><thead><tr><th>Rank</th><th>Ad network</th><th>Avg latency</th><th>Success</th><th>Rev at risk</th></tr></thead><tbody>` +
+sla.map((s,i)=>`<tr><td>${i+1}</td><td>${s.network}</td><td><b>${s.avg_latency_ms}ms</b> ${s.avg_latency_ms>1800?badge("drop-off","fail"):s.avg_latency_ms>900?badge("slow","warn"):badge("fast","ok")}</td><td>${s.success_rate_pct}%</td><td>$${s.revenue_at_risk.toLocaleString()}</td></tr>`).join("") + `</tbody></table>
+<h3 style="font-size:14px">Core Web Vitals penalty matrix (estimate — redirect overhead vs LCP budget)</h3><table><thead><tr><th>Chain</th><th>Redirect overhead</th><th>% of 2500ms LCP budget</th><th>Mobile UX</th></tr></thead><tbody>` +
+C.map(c=>{const t=Math.round(c.latency?.total_ms||0),p=Math.round(t/2500*100);return `<tr><td>${c.source_url}</td><td>${t}ms</td><td>${p}%</td><td>${t>1800?badge("likely poor LCP","fail"):t>900?badge("needs improvement","warn"):badge("good headroom","ok")}</td></tr>`;}).join("") + `</tbody></table></div>`;
+
+// O4 — compliance report
+const viol=C.filter(c=>!c.compliance?.compliant), geo=C.filter(c=>c.compliance?.geo_mismatch);
+h += `<div class="card"><h2><span class="n">O4</span>Regulatory &amp; Legal Risk Audit Report</h2>
+<h3 style="font-size:14px">Compliance violation log (${viol.length})</h3><table><thead><tr><th>Lander</th><th>Missing strings</th><th>Missing badges</th><th>Soft-404</th></tr></thead><tbody>` +
+(viol.map(c=>`<tr><td style="word-break:break-all">${c.final_url}</td><td>${Object.entries(c.compliance.required_strings||{}).filter(([k,v])=>!v).map(([k])=>k).join(", ")||"—"}</td><td>${Object.entries(c.compliance.license_badges||{}).filter(([k,v])=>!v).map(([k])=>k).join(", ")||"—"}</td><td>${c.compliance.soft404_detected?(c.compliance.soft404_phrases_hit||[]).join(", "):"—"}</td></tr>`).join("")||`<tr><td colspan="4">No violations 🎉</td></tr>`) + `</tbody></table>
+<h3 style="font-size:14px">Geo-mismatched target log (${geo.length})</h3><pre>${geo.map(c=>`${c.geo}: ${c.source_url} → ${c.final_url} (${c.compliance.geo_mismatch_detail})`).join("\n")||"No geo mismatches"}</pre></div>`;
+
+// O5 — alerting
+h += `<div class="card"><h2><span class="n">O5</span>Enterprise Alerting &amp; Webhook Notifications</h2><table><thead><tr><th>Channel</th><th>Severity</th><th>Message</th></tr></thead><tbody>` +
+((R.alerts||[]).map(a=>`<tr><td>${a.channel}</td><td>${badge(a.severity,a.severity==="critical"?"fail":"warn")}</td><td>${a.text}</td></tr>`).join("")||`<tr><td colspan="3">No alerts — all quiet</td></tr>`) + `</tbody></table>
+<h3 style="font-size:14px">Automated email summary (daily digest preview)</h3><pre>To: SEO leads, affiliate managers, engineering\nSubject: Daily affiliate-link health — ${(R.health_index||0)}/100, $${(R.revenue_at_risk||0).toLocaleString()} at risk\n\n${(R.alerts||[]).map(a=>`• [${a.severity}] ${a.text}`).join("\n")||"No issues in the last 24h."}</pre></div>`;
+
+// O6 — edge patches
+h += `<div class="card"><h2><span class="n">O6</span>Auto-Generated Edge Patch Rules</h2>` +
+(C.filter(c=>c.edge_patch?.needed).map((c,i)=>`<h3 style="font-size:14px">${c.source_url}</h3><pre id="wp${i}">${(c.edge_patch.wordpress_redirect||"").replace(/</g,"&lt;")}</pre><div class="rowbtns"><button class="btn ghost" onclick="copyText('wp${i}')">Copy WP rule</button></div>`).join("")||"<p class='d'>No patches needed.</p>") + `</div>`;
+
+// O7 — adblock scorecard
+const abn=C.filter(c=>c.adblock_vulnerable).length, pct=C.length?Math.round(abn/C.length*100):0;
+h += `<div class="card"><h2><span class="n">O7</span>Ad-Blocker Vulnerability Scorecard</h2><div class="kpis"><div class="kpi"><div class="l">Paths failing under privacy tools</div><div class="v">${pct}% (${abn}/${C.length})</div></div></div>
+<table><thead><tr><th>Chain</th><th>Blocked hosts</th></tr></thead><tbody>` +
+C.map(c=>`<tr><td>${c.source_url}</td><td>${(c.adblock_blocked_hosts||[]).join(", ")||"—"}</td></tr>`).join("") + `</tbody></table></div>`;
+
+// O8 — SLA matrix
+h += `<div class="card"><h2><span class="n">O8</span>Ad Network SLA Performance Matrix</h2><table><thead><tr><th>Network</th><th>Checks</th><th>Uptime (chain success)</th><th>Avg latency</th><th>Param survival*</th><th>Rev at risk</th></tr></thead><tbody>` +
+(R.sla||[]).map(s=>`<tr><td><b>${s.network}</b></td><td>${s.checks}</td><td>${s.success_rate_pct}%</td><td>${s.avg_latency_ms}ms</td><td>see F2 per-chain events</td><td>$${s.revenue_at_risk.toLocaleString()}</td></tr>`).join("") + `</tbody></table><p class="d">Use this table at contract renewals: uptime + latency + survival per tracking partner.</p></div>`;
+
+// O9 — vendor tickets
+h += `<div class="card"><h2><span class="n">O9</span>Automated Vendor Ticket Generation</h2>` +
+(C.filter(c=>!c.chain_ok||!c.params_intact).map((c,i)=>`<h3 style="font-size:14px">→ ${c.expected_operator||"operator"} (${c.geo} / ${c.device})</h3><pre id="vt${i}">${(c.vendor_ticket||"").replace(/</g,"&lt;")}</pre><div class="rowbtns"><button class="btn ghost" onclick="copyText('vt${i}')">Copy ticket</button></div>`).join("")||"<p class='d'>No vendor tickets — nothing to escalate.</p>") + `</div>`;
+
+root.innerHTML = h;
+new Chart(chH,{type:"bar",data:{labels:C.map((c,i)=>"#"+(i+1)),datasets:[{label:"Health",data:C.map(c=>c.health_score)}]},options:{plugins:{title:{display:true,text:"Health per URL"}}}});
+new Chart(chL,{type:"bar",data:{labels:C.map((c,i)=>"#"+(i+1)),datasets:[{label:"Latency ms",data:C.map(c=>Math.round(c.latency?.total_ms||0))}]},options:{plugins:{title:{display:true,text:"Latency per URL (ms)"}}}});
+}
+function dlCSV(){ download("audit_report.csv", toCSV(store.get("pf_result",{chains:[]}).chains||[]), "text/csv"); }
+async function dlPDF(){
+  const btn=document.querySelector("#pdfbtn"); btn.disabled=true; btn.textContent="⏳ Building real PDF…";
+  try{ await downloadPDF(store.get("pf_result",{}), store.get("pf_input",{})); }
+  catch(e){ alert(e); }
+  btn.disabled=false; btn.textContent="⬇ Full PDF report (real PDF)";
+}
+function dlJSON(){ download("audit_report.json", JSON.stringify(store.get("pf_result",{}),null,2), "application/json"); }
+function dlJIRA(){ download("jira_tickets.json", JSON.stringify(store.get("pf_result",{jira:[]}).jira||[],null,2), "application/json"); }
+</script>
+</body>
+</html>
